@@ -1,0 +1,16 @@
+pymafia: Procédure pour les tests unitaires
+
+1) Dans pycharm, faites un refactor du nom du fichier dé.py pour de.py
+
+2) Ajoutez les deux lignes suivantes aux classes Joueur et Dé:
+	    def __repr__(self):
+        		return str(self)
+
+3) Placez le répertoire de tests (que vous aurez préalablement dézippé) dans le répertoire de pymafia.
+
+4) Modifiez le nom du répertoire dans le fichier __main__.py dans le répertoire des tests.
+
+5) Créez une configuration d'exécution de tests unitaires dans pycharm.
+
+
+Cette procédure aura été montrée au début du cours du 30 mars.
