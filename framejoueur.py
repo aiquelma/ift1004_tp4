@@ -18,7 +18,7 @@ class FrameJoueur(Frame):
         pass
 
 
-class FrameJoueurGauche(FrameJoueur):
+class FrameJoueurGaucheHaut(FrameJoueur):
     def __init__(self, master, joueur):
         super().__init__(master, joueur)
         self.label_des['wrapLength'] = 1
@@ -30,7 +30,7 @@ class FrameJoueurGauche(FrameJoueur):
         button_des = Button(self, text="rouler les dés")
 
 
-class FrameJoueurDroit(FrameJoueur):
+class FrameJoueurDroitHaut(FrameJoueur):
     def __init__(self, master, joueur):
         super().__init__(master, joueur)
         self.label_des['wrapLength'] = 1
@@ -42,7 +42,7 @@ class FrameJoueurDroit(FrameJoueur):
         button_des = Button(self, text="rouler les dés")
 
 
-class FrameJoueurHaut(FrameJoueur):
+class FrameJoueurGaucheBas(FrameJoueur):
     def __init__(self, master, joueur):
         super().__init__(master, joueur)
         self.label_des['wrapLength'] = 1
@@ -50,11 +50,14 @@ class FrameJoueurHaut(FrameJoueur):
         self.label_des.grid(row=0, column=1)
         self.label_des['wrapLength'] = 1
         self.button_des.grid(row=0, column=2)
+        boutonJ1 = Button(text='rouler les dés')
+        boutonJ1.grid(row=2, column=2)
+        boutonJ1.pack
 
         button_des = Button(self, text="rouler les dés")
 
 
-class FrameJoueurBas(FrameJoueur):
+class FrameJoueurDroitBas(FrameJoueur):
     def __init__(self, master, joueur):
         super().__init__(master, joueur)
         self.label_des['wrapLength'] = 1

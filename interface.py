@@ -32,7 +32,7 @@ class FenetrePymafia(Tk):
 
         self.menu = Menu(self)
         self.premier_menu = Menu(self.menu, tearoff=0)
-        self.premier_menu.add_command(label='Nouvelle partie', command=lambda event: )  # pas complet.
+#        self.premier_menu.add_command(label='Nouvelle partie', command=lambda event: )  # pas complet.
         self.premier_menu.add_separator()
         self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
         self.config(menu=self.menu)
