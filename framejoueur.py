@@ -22,7 +22,7 @@ class FrameJoueurGaucheHaut(FrameJoueur):
         super().__init__(master, joueur)
         self.label_joueur.grid(row=0, column=0)
         self.label_des.grid(row=0, column=1)
-        self.label_des['wrapLength'] = 1
+        self.label_des['wraplength'] = 1
         self.button_des.grid(row=0, column=2)
         # self.label_des['wrapLength'] = 1
         # button_des = Button(self, text="rouler les dés")
