@@ -8,7 +8,7 @@ class Pymafia(Tk):
     def __init__(self):
         super().__init__()
         self.creer_menu_fichier()
-        self.resizable(0,0)
+        self.resizable(0, 0)
         self['height'] = 800
         self['width'] = 800
         self.title("BiEnVeNuE a MoN JeU dE pYmAfIa")
@@ -27,7 +27,6 @@ class Pymafia(Tk):
         self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
         self.config(menu=self.menu)
 
-
     def rien(self):
         pass
 
@@ -37,11 +36,10 @@ class Pymafia(Tk):
         label["text"] = "Débuter une partie"
         label_partie = self.creerLabel(frame, fgcolor="black", bgcolor="purple", rowpos=4, columnpos=0, anchorpos="w")
         label_partie['text'] = "Veuillez sélectionner le nombre de joueurs:"
-        ddListe = ["1","2","3","4"]
+        ddListe = ["1", "2", "3", "4"]
         frame2 = Frame(self, width=400, height=400)
         dd = self.creerDropDown(frame2, ddListe)
         dd.pack()
-
 
     def creerLabel(self, frame, fgcolor, bgcolor, rowpos, columnpos, anchorpos, cs=1, rs=1):
         self.label = Label(frame, fg=fgcolor, bg=bgcolor)
