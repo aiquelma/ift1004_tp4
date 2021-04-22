@@ -13,7 +13,7 @@ class FrameJoueur(Frame):
         self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
 
     def mettre_a_jour_dés(self, joueur: Joueur):
-        Joueur.rouler_dés(self)
+        joueur.rouler_dés()
         self.label_dés['text'] = joueur.dés
         return
 
@@ -24,9 +24,6 @@ class FrameJoueurGaucheHaut(FrameJoueur):
         self.label_joueur.grid(row=0, column=1)
         self.label_dés.grid(row=2, column=1)
         self.button_dés.grid(row=1, column=1)
-#        self.dés = Joueur.rouler_dés(self.dés)
-
-#        self.button_dés = Button(self, text="rouler les dés")
 
 
 class FrameJoueurDroitHaut(FrameJoueur):
