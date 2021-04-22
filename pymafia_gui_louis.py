@@ -9,17 +9,23 @@ class FenetrePymafia(Tk):
         self.title("PyMafia")
         self.resizable(0, 0)
         self.partie = Partie(NombreDeJoueurs, NombreDeJoueurs)
-        self.partie.reinitialiser_dés_joueurs()
-        self.framesJoueurs = [
-            FrameJoueurGaucheHaut(self, self.partie.joueurs[0]),
-            FrameJoueurDroitHaut(self, self.partie.joueurs[1]),
-            FrameJoueurDroitBas(self, self.partie.joueurs[2]),
-            FrameJoueurGaucheBas(self, self.partie.joueurs[3]),
-        ]
+        #self.partie.reinitialiser_dés_joueurs()
+        self.framesJoueurs = list()
+        joueur_temporaire = FrameJoueurGaucheHaut(self, self.partie.joueurs[0])
+        self.framesJoueurs.append(joueur_temporaire)
+        self.framesJoueurs.append(FrameJoueurDroitHaut(self, self.partie.joueurs[1]))
         self.framesJoueurs[0].grid(row=0, column=0, padx=60, pady=60)
         self.framesJoueurs[1].grid(row=0, column=2, padx=60, pady=60)
-        self.framesJoueurs[2].grid(row=2, column=2, padx=60, pady=60)
-        self.framesJoueurs[3].grid(row=2, column=0, padx=60, pady=60)
+        if NombreDeJoueurs >= 3:
+            self.framesJoueurs.append(FrameJoueurDroitBas(self, self.partie.joueurs[2]))
+            self.framesJoueurs[2].grid(row=2, column=2, padx=60, pady=60)
+        if NombreDeJoueurs == 4:
+            self.framesJoueurs.append(FrameJoueurGaucheBas(self, self.partie.joueurs[3]))
+            self.framesJoueurs[3].grid(row=2, column=0, padx=60, pady=60)
+        self.debuter_la_partie()
+
+    def debuter_la_partie(self):
+        if self.partie.premier_joueur
 
 
 class debutPartie(Tk):
