@@ -23,7 +23,6 @@ class FenetrePymafia(Tk):
         if NombreDeJoueurs == 4:
             self.framesJoueurs.append(FrameJoueurGaucheBas(self, self.partie.joueurs[3]))
             self.framesJoueurs[3].grid(row=2, column=0, padx=60, pady=60)
-        self.cacher_tout()
         self.debuter_la_partie(self.partie)
 
     def debuter_la_partie(self, partie: Partie):
@@ -38,21 +37,18 @@ class FenetrePymafia(Tk):
         boutonSelect1.grid(row=0, column=1)
         boutonSelect2.bind("<ButtonRelease-1>", lambda event: self.sensDeJeu(1, boutonSelect1, boutonSelect2, demandeDeSens))
         boutonSelect2.grid(row=0, column=2)
+        for fj in self.framesJoueurs:
+            fj.grid_forget()
 
     def sensDeJeu(self, direction, boutonSelect1, boutonSelect2, demandeDeSens):
         self.partie.sens = direction
         boutonSelect1.destroy()
         boutonSelect2.destroy()
         demandeDeSens.destroy()
+        for fj in self.framesJoueurs:
+            fj.grid()
 
-    def cacher_tout(self):
-        for typeElement in self.children:
-            print(self.children[typeElement])
-            if isinstance(typeElement, Label):
-                typeElement.pack_forget()
-            if isinstance(typeElement, FrameJoueurGaucheHaut):
-                typeElement.pack_forget()
-        pass
+
 
 class debutPartie(Tk):
     def __init__(self):
