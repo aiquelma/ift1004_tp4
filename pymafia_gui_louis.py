@@ -1,4 +1,4 @@
-from tkinter import Tk, RAISED, ACTIVE,DISABLED, Label, StringVar, OptionMenu, Button
+from tkinter import Tk, RAISED, ACTIVE,DISABLED, Label, StringVar, OptionMenu, Button, Menu, IntVar, Text, Toplevel
 from framejoueur import FrameJoueurDroitBas, FrameJoueurDroitHaut, FrameJoueurGaucheBas, FrameJoueurGaucheHaut
 from pymafia.partie import Partie
 
@@ -8,7 +8,7 @@ class FenetrePymafia(Tk):
         super().__init__()
         self.title("PyMafia")
         self.resizable(0, 0)
-        self.partie = Partie(NombreDeJoueurs, 0)
+        self.partie = Partie(NombreDeJoueurs, NombreDeJoueurs)
         self.partie.reinitialiser_dés_joueurs()
         self.framesJoueurs = [
             FrameJoueurGaucheHaut(self, self.partie.joueurs[0]),
@@ -38,6 +38,8 @@ class debutPartie(Tk):
         self.debuterPartie = Button(self,  text="Let's do this baby!")
         self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencer_partie(nbJoueur))
         self.debuterPartie.grid(row=1,column=3, padx=30, pady=30)
+        self.creer_menu_fichier()
+
 
     def commencer_partie(self, nbJoueur : StringVar):
         NombreDeJoueurs = int(nbJoueur.get())
@@ -45,6 +47,46 @@ class debutPartie(Tk):
         Jouer = FenetrePymafia(NombreDeJoueurs)
         Jouer.mainloop()
 
+    def creer_menu_fichier(self):
+        intvar = IntVar()
+        self.menu = Menu(self)
+        self.optionMenu = OptionMenu(self, intvar, 3, 4, 5, 6)
+        self.premier_menu = Menu(self.menu, tearoff=0)
+        self.premier_menu.add_command(label='Règlements', command=self.afficher_reglements)
+        self.premier_menu.add_command(label='Recommencer partie')
+        self.premier_menu.add_command(label='Pointage')
+        self.premier_menu.add_separator()
+        self.premier_menu.add_command(label='Quitter', command=self.destroy)
+        self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
+        self.config(menu=self.menu)
+
+    def afficher_reglements(self):
+        reglements = Tk()
+        reglements.title("Règlements")
+        reglements.resizable(0,0)
+        regles = self.regles_jeu()
+        label = Label(reglements, text=regles, relief=RAISED)
+        label.grid(row=0, column=0, padx=10, pady=10)
+        reglements.mainloop()
+
+
+    def regles_jeu(self):
+        return """Instructions\n\n,.-'¨'-.,-=-,.-'¨'-.,-= Pymafia =-,.-'¨'-.,-=-,.-'¨'-.,\n\n
+          La partie peut se jouer avec un max de 8 joueurs mais nous suggérons fortement au moins 2.
+          Les joueurs peuvent être humains ou ordinateurs ou les deux mais pas les trois.
+          Les joueurs débutent avec chacun 50 points \"en banque\" et le but du jeux est de conserver le
+          plus de points possible. Si un joueur n'a plus de points en banque, il quitte la partie.
+          Le premier joueur à jouer est celui qui obtient le plus haut score en brassant chacun 2 dés.
+          Le premier joueur doit déterminer si les tours seront croissant ou décroissant.
+          \n\n,.-'¨'-.,-=-,.-'¨'-.,-= DéRoUlEmEnT dE lA pArTiE =-,.-'¨'-.,-=-,.-'¨'-.,\n
+          Tous les joueurs reçoivent 5 dés et jouerons à tour de rôle selon le sens choisi.
+          Lorsque le joueur_courant brasse un 1, il retire un dé de sa main. Lorsqu'il brasse un 6,
+          il donne un dé au joueur suivant. Quand le joueur brasse un 2-3-4-5, il ne fais rien de particulier.
+          Lorsque un joueur n'a plus de dés en main, la ronde est terminé, ce joueur a gagné la ronde.
+          Les joueurs ayant encore des dés brassent leurs dés, soustraient ce pointage de leur banque et
+          le donnent au joueur gagnant.
+          La partie compte un maximum de 10 rondes et le gagnant est celui qui aura le plus haut score à
+          la fin de ces 10 rondes à moins d'être le seul joueur à avoir des points avant ce temps."""
 
 if __name__ == '__main__':
     jouer = debutPartie()
