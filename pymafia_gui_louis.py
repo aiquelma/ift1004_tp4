@@ -1,14 +1,14 @@
-from tkinter import Tk, RAISED, ACTIVE,DISABLED, Label, StringVar, OptionMenu
+from tkinter import Tk, RAISED, ACTIVE,DISABLED, Label, StringVar, OptionMenu, Button
 from framejoueur import FrameJoueurDroitBas, FrameJoueurDroitHaut, FrameJoueurGaucheBas, FrameJoueurGaucheHaut
 from pymafia.partie import Partie
 
 
 class FenetrePymafia(Tk):
-    def __init__(self):
+    def __init__(self, NombreDeJoueurs):
         super().__init__()
         self.title("PyMafia")
         self.resizable(0, 0)
-        self.partie = Partie(4, 0)
+        self.partie = Partie(NombreDeJoueurs, 0)
         self.partie.reinitialiser_dés_joueurs()
         self.framesJoueurs = [
             FrameJoueurGaucheHaut(self, self.partie.joueurs[0]),
@@ -30,13 +30,20 @@ class debutPartie(Tk):
         self.resizable(0, 0)
         self.label = Label(self, text=debuttxt, relief=RAISED)
         self.label.grid(row=0, column=0, padx=30, pady=30)
-        choixNbJoueurs = ["1", "2", "3", "4"]
+        choixNbJoueurs = ["2", "3", "4"]
         nbJoueur = StringVar(self)
         nbJoueur.set(choixNbJoueurs[0])
         self.totalJoueurs = OptionMenu(self, nbJoueur, *choixNbJoueurs)
         self.totalJoueurs.grid(row=0, column=3,padx=30, pady=30)
+        self.debuterPartie = Button(self,  text="Let's do this baby!")
+        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencer_partie(nbJoueur))
+        self.debuterPartie.grid(row=1,column=3, padx=30, pady=30)
 
-
+    def commencer_partie(self, nbJoueur : StringVar):
+        NombreDeJoueurs = int(nbJoueur.get())
+        self.destroy()
+        Jouer = FenetrePymafia(NombreDeJoueurs)
+        Jouer.mainloop()
 
 
 if __name__ == '__main__':
