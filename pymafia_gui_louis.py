@@ -9,7 +9,7 @@ class FenetrePymafia(Tk):
         self.title("PyMafia")
         self.resizable(0, 0)
         self.partie = Partie(NombreDeJoueurs, NombreDeJoueurs)
-        #self.partie.reinitialiser_dés_joueurs()
+        self.premierJoueur()
         self.framesJoueurs = list()
         joueur_temporaire = FrameJoueurGaucheHaut(self, self.partie.joueurs[0])
         self.framesJoueurs.append(joueur_temporaire)
@@ -25,8 +25,12 @@ class FenetrePymafia(Tk):
         self.debuter_la_partie()
 
     def debuter_la_partie(self):
-        if self.partie.premier_joueur
+        if self.partie.premier_joueur:
+            pass
 
+    def premierJoueur(self):
+        self.button_dés = Button(self, text="rouler les dés")
+        self.button_dés.bind("<ButtonRelease-1>", lambda event: self.premierJoueur(self, self.trouver_premier_joueur()))
 
 class debutPartie(Tk):
     def __init__(self):
