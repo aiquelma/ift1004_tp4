@@ -11,6 +11,8 @@ class FrameJoueur(Frame):
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
         self.button_dés = Button(self, text="rouler les dés")
         self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
+        self.joueur = joueur
+        self.last_grid = {}
 
     def mettre_a_jour_dés(self, joueur: Joueur):
         joueur.rouler_dés()

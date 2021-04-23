@@ -38,6 +38,7 @@ class FenetrePymafia(Tk):
         boutonSelect2.bind("<ButtonRelease-1>", lambda event: self.sensDeJeu(1, boutonSelect1, boutonSelect2, demandeDeSens))
         boutonSelect2.grid(row=0, column=2)
         for fj in self.framesJoueurs:
+            fj.last_grid  = fj.grid_info()
             fj.grid_forget()
 
     def sensDeJeu(self, direction, boutonSelect1, boutonSelect2, demandeDeSens):
@@ -45,10 +46,13 @@ class FenetrePymafia(Tk):
         boutonSelect1.destroy()
         boutonSelect2.destroy()
         demandeDeSens.destroy()
+        # Remettre le grid comme il était et distribuer les 5 dés aux joueurs
         for fj in self.framesJoueurs:
-            fj.grid()
-
-
+            fj.grid(column=fj.last_grid['column'], row=fj.last_grid['row'], padx=fj.last_grid['padx'],
+                    pady=fj.last_grid['pady'])
+        self.partie.reinitialiser_dés_joueurs()
+        for fj in self.framesJoueurs:
+            fj.mettre_a_jour_dés(fj.joueur)
 
 class debutPartie(Tk):
     def __init__(self):
