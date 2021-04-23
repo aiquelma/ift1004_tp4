@@ -1,6 +1,7 @@
-from tkinter import Frame, Label, Button, DISABLED, ACTIVE
+from tkinter import Frame, Label, Button, DISABLED, ACTIVE, Tk
 from pymafia.joueur import Joueur
 from pymafia.partie import Partie
+
 
 class FrameJoueur(Frame):
     def __init__(self, master, joueur):
@@ -9,6 +10,8 @@ class FrameJoueur(Frame):
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
         self.button_dés = Button(self, text="rouler les dés", state=DISABLED)
         self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
+        #  le .config ne fonctionne pas, j'ai essayé kek trucs de stackoverflow mais j'ai pas eu le temps de trouver la solution.
+        #  Je peux continuer demain si tu veux!'
         # for joueur.identifiant in joueur:
         #     if joueur.identifiant == self.joueur_courant:
         #         self.button_dés = Button(self, text="rouler les dés", state=ACTIVE)

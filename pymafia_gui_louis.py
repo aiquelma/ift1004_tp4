@@ -49,7 +49,7 @@ class FenetrePymafia(Tk):
         bouton_select1.destroy()
         bouton_select2.destroy()
         demande_de_sens.destroy()
-        self.label.destroy()
+#        self.label.destroy()
         # Remettre le grid comme il était et distribuer les 5 dés aux joueurs
         for fj in self.framesJoueurs:
             fj.grid(column=fj.last_grid['column'], row=fj.last_grid['row'], padx=fj.last_grid['padx'],
