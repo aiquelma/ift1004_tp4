@@ -1,7 +1,5 @@
 from tkinter import Frame, Label, Button
 from pymafia.joueur import Joueur
-from pymafia.de import Dé
-from pymafia.partie import Partie
 
 
 class FrameJoueur(Frame):
@@ -34,7 +32,6 @@ class FrameJoueurDroitHaut(FrameJoueur):
         self.label_joueur.grid(row=0, column=1)
         self.label_dés.grid(row=2, column=1)
         self.button_dés.grid(row=1, column=1)
-#        self.dés = Joueur.rouler_dés(self.dés)
 
 
 class FrameJoueurGaucheBas(FrameJoueur):
@@ -43,9 +40,6 @@ class FrameJoueurGaucheBas(FrameJoueur):
         self.label_joueur.grid(row=3, column=1)
         self.label_dés.grid(row=1, column=1)
         self.button_dés.grid(row=2, column=1)
-#        self.dés = Joueur.rouler_dés(self.dés)
-
-        button_des = Button(self, text="rouler les dés")
 
 
 class FrameJoueurDroitBas(FrameJoueur):
@@ -54,6 +48,3 @@ class FrameJoueurDroitBas(FrameJoueur):
         self.label_joueur.grid(row=3, column=1)
         self.label_dés.grid(row=1, column=1)
         self.button_dés.grid(row=2, column=1)
-#        self.dés = Joueur.rouler_dés(self.dés)
-
-        button_des = Button(self, text="rouler les dés")

@@ -6,21 +6,21 @@ from random import randint
 
 
 class FenetrePymafia(Tk):
-    def __init__(self, NombreDeJoueurs):
+    def __init__(self, nombre_de_joueurs):
         super().__init__()
         self.title("PyMafia")
         self.resizable(0, 0)
-        self.partie = Partie(NombreDeJoueurs, NombreDeJoueurs)
+        self.partie = Partie(nombre_de_joueurs, nombre_de_joueurs)
         self.framesJoueurs = list()
         joueur_temporaire = FrameJoueurGaucheHaut(self, self.partie.joueurs[0])
         self.framesJoueurs.append(joueur_temporaire)
         self.framesJoueurs.append(FrameJoueurDroitHaut(self, self.partie.joueurs[1]))
         self.framesJoueurs[0].grid(row=0, column=0, padx=60, pady=60)
         self.framesJoueurs[1].grid(row=0, column=2, padx=60, pady=60)
-        if NombreDeJoueurs >= 3:
+        if nombre_de_joueurs >= 3:
             self.framesJoueurs.append(FrameJoueurDroitBas(self, self.partie.joueurs[2]))
             self.framesJoueurs[2].grid(row=2, column=2, padx=60, pady=60)
-        if NombreDeJoueurs == 4:
+        if nombre_de_joueurs == 4:
             self.framesJoueurs.append(FrameJoueurGaucheBas(self, self.partie.joueurs[3]))
             self.framesJoueurs[3].grid(row=2, column=0, padx=60, pady=60)
         self.debuter_la_partie(self.partie)
@@ -29,23 +29,28 @@ class FenetrePymafia(Tk):
         hasard = randint(1, (len(self.framesJoueurs))) - 1
         partie.premier_joueur = self.framesJoueurs[hasard]
         print(f"joueur {hasard + 1}")
-        demandeDeSens = Label(self, text="Dans quel sens jouer", font=("courrier", 12))
-        demandeDeSens.grid(row=0, column=0)
-        boutonSelect1 = Button(self, text="vers la gauche")
-        boutonSelect2 = Button(self, text="vers la droite")
-        boutonSelect1.bind("<ButtonRelease-1>", lambda event: self.sensDeJeu(-1, boutonSelect1, boutonSelect2, demandeDeSens))
-        boutonSelect1.grid(row=0, column=1)
-        boutonSelect2.bind("<ButtonRelease-1>", lambda event: self.sensDeJeu(1, boutonSelect1, boutonSelect2, demandeDeSens))
-        boutonSelect2.grid(row=0, column=2)
+        demande_de_sens = Label(self, text="Dans quel sens jouer", font=("courrier", 12))
+        demande_de_sens.grid(row=0, column=0)
+        self.label = Label(self, text=f"Le premier joueur est le joueur {hasard + 1}.", relief=RAISED)
+        self.label.grid(row=1, column=0, padx=10, pady=10)
+        bouton_select1 = Button(self, text="vers la gauche")
+        bouton_select2 = Button(self, text="vers la droite")
+        bouton_select1.bind("<ButtonRelease-1>", lambda event: self.sens_de_jeu(-1, bouton_select1, bouton_select2,
+                                                                                demande_de_sens))
+        bouton_select1.grid(row=0, column=1)
+        bouton_select2.bind("<ButtonRelease-1>", lambda event: self.sens_de_jeu(1, bouton_select1, bouton_select2,
+                                                                                demande_de_sens))
+        bouton_select2.grid(row=0, column=2)
         for fj in self.framesJoueurs:
-            fj.last_grid  = fj.grid_info()
+            fj.last_grid = fj.grid_info()
             fj.grid_forget()
 
-    def sensDeJeu(self, direction, boutonSelect1, boutonSelect2, demandeDeSens):
+    def sens_de_jeu(self, direction, bouton_select1, bouton_select2, demande_de_sens):
         self.partie.sens = direction
-        boutonSelect1.destroy()
-        boutonSelect2.destroy()
-        demandeDeSens.destroy()
+        bouton_select1.destroy()
+        bouton_select2.destroy()
+        demande_de_sens.destroy()
+        self.label.destroy()
         # Remettre le grid comme il était et distribuer les 5 dés aux joueurs
         for fj in self.framesJoueurs:
             fj.grid(column=fj.last_grid['column'], row=fj.last_grid['row'], padx=fj.last_grid['padx'],
@@ -54,7 +59,8 @@ class FenetrePymafia(Tk):
         for fj in self.framesJoueurs:
             fj.mettre_a_jour_dés(fj.joueur)
 
-class debutPartie(Tk):
+
+class DebutPartie(Tk):
     def __init__(self):
         super().__init__()
         self.title("PyMafia - Débuter une partie")
@@ -74,44 +80,44 @@ class debutPartie(Tk):
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
 
         # Création des boutons radios
-        typeJoueur = [("Humain",101,"Ordinateur",102),("Humain",201,"Ordinateur",202),("Humain",301,"Ordinateur",302),
-        ("Humain", 401, "Ordinateur", 402)]
+        typeJoueur = [("Humain", 101, "Ordinateur", 102), ("Humain", 201, "Ordinateur", 202), ("Humain", 301,
+                                                                                               "Ordinateur", 302),
+                      ("Humain", 401, "Ordinateur", 402)]
         radioButtonOffsetRow = 2
         radioButtonOffsetCol = 1
         joueurVar = list()
         radiobuttons = list()
         joueurVarOffset = 0
-        for joueurType1,joueurVal1,joueurType2,joueurVal2 in typeJoueur:
+        for joueurType1, joueurVal1, joueurType2, joueurVal2 in typeJoueur:
             joueurVar.append(StringVar())
-            Label(self, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol - 1)
-            radiobuttons.append(Radiobutton(self, text=joueurType1, variable=joueurVar[joueurVarOffset], value=joueurVal1, padx=0, pady=0,
-                        tristatevalue=1
-                        ).grid(
-                row=radioButtonOffsetRow, column=radioButtonOffsetCol
-            ))
-            radiobuttons.append(Radiobutton(self, text=joueurType2, variable=joueurVar[joueurVarOffset], value=joueurVal2, padx=0, pady=0).grid(
-                row=radioButtonOffsetRow, column=radioButtonOffsetCol + 1
-            ))
-            joueurVar[joueurVarOffset].set(joueurVal1) ## Permet de sélectionner par défaut Humain
+            Label(self, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol
+                                                                  - 1)
+            radiobuttons.append(Radiobutton(self, text=joueurType1, variable=joueurVar[joueurVarOffset],
+                                            value=joueurVal1, padx=0, pady=0, tristatevalue=1).grid
+                                (row=radioButtonOffsetRow, column=radioButtonOffsetCol))
+            radiobuttons.append(Radiobutton(self, text=joueurType2, variable=joueurVar[joueurVarOffset],
+                                            value=joueurVal2, padx=0, pady=0).grid(row=radioButtonOffsetRow,
+                                                                                   column=radioButtonOffsetCol + 1))
+            joueurVar[joueurVarOffset].set(joueurVal1)  # Permet de sélectionner par défaut Humain
             radioButtonOffsetRow += 1
             joueurVarOffset += 1
-        ## Fin de création des boutons radios
+        # Fin de création des boutons radios
 
-        ## Création bouton de démarrage de jeu ##
+        # Création bouton de démarrage de jeu ##
         self.debuterPartie = Button(self,  text="Let's do this baby!")
-        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencer_partie(nbJoueur, joueurVar))
+        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencerPartie(nbJoueur, joueurVar))
         self.debuterPartie.grid(row=radioButtonOffsetRow+1, column=1, padx=10, pady=10)
         self.creer_menu_fichier()
 
-    def commencer_partie(self, nbJoueur : StringVar, joueurVar):
-        NombreDeJoueurs = int(nbJoueur.get())
+    def commencerPartie(self, nbJoueur: StringVar, joueurVar):
+        nombre_de_joueurs = int(nbJoueur.get())
         self.lireBoutonRadio(joueurVar)
         self.destroy()
-        Jouer = FenetrePymafia(NombreDeJoueurs)
+        Jouer = FenetrePymafia(nombre_de_joueurs)
         Jouer.mainloop()
 
     def lireBoutonRadio(self, joueurVar):
-        ## À développer, il faut définir quel joueur dans la liste est un humain, quel ne l'est pas.
+        # À développer, il faut définir quel joueur dans la liste est un humain, quel ne l'est pas.
         # Ici, joueurVar contient la liste des choix des boutons radios
         # Cette fonction doit extraire le nombre de joueur humains, j'ai défini les joueurs humain par #XX1
         # ordinateurs par #XX2
@@ -135,12 +141,11 @@ class debutPartie(Tk):
     def afficher_reglements(self):
         reglements = Tk()
         reglements.title("Règlements")
-        reglements.resizable(0,0)
+        reglements.resizable(0, 0)
         regles = self.regles_jeu()
         label = Label(reglements, text=regles, relief=RAISED)
         label.grid(row=0, column=0, padx=10, pady=10)
         reglements.mainloop()
-
 
     def regles_jeu(self):
         return """Instructions\n\n,.-'¨'-.,-=-,.-'¨'-.,-= Pymafia =-,.-'¨'-.,-=-,.-'¨'-.,\n\n
@@ -160,8 +165,9 @@ class debutPartie(Tk):
           La partie compte un maximum de 10 rondes et le gagnant est celui qui aura le plus haut score à
           la fin de ces 10 rondes à moins d'être le seul joueur à avoir des points avant ce temps."""
 
+
 if __name__ == '__main__':
-    jouer = debutPartie()
+    jouer = DebutPartie()
     jouer.mainloop()
 
     # fenetre = FenetrePymafia()
