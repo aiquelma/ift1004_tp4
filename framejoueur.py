@@ -9,6 +9,7 @@ class FrameJoueur(Frame):
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
         self.button_dés = Button(self, text="rouler les dés", state=DISABLED)
         self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
+        ### essayer le self.button_dés.configure - voir la documentation
         # for joueur.identifiant in joueur:
         #     if joueur.identifiant == self.joueur_courant:
         #         self.button_dés = Button(self, text="rouler les dés", state=ACTIVE)

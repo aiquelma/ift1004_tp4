@@ -49,7 +49,7 @@ class FenetrePymafia(Tk):
         bouton_select1.destroy()
         bouton_select2.destroy()
         demande_de_sens.destroy()
-        self.label.destroy()
+        #self.label.destroy()
         # Remettre le grid comme il était et distribuer les 5 dés aux joueurs
         for fj in self.framesJoueurs:
             fj.grid(column=fj.last_grid['column'], row=fj.last_grid['row'], padx=fj.last_grid['padx'],
@@ -71,9 +71,11 @@ class DebutPartie(Tk):
         choixNbJoueurs = ["2", "3", "4"]
         nbJoueur = StringVar(self)
         nbJoueur.set(choixNbJoueurs[0])
-        self.totalJoueurs = OptionMenu(self, nbJoueur, *choixNbJoueurs)
+        radiobuttons = list()
+        self.totalJoueurs = OptionMenu(self, nbJoueur, *choixNbJoueurs, command= lambda event: self.changementDropdown(radiobuttons, nbJoueur))
         self.totalJoueurs.grid(row=0, column=1, padx=10, pady=10)
         # Fin DropDown
+
         self.labelChoixHumainOrdinateur = Label(self, text="Veuillez choisir le type de joueur:", relief=FLAT,
                                                 justify=LEFT, anchor="w")
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
@@ -84,7 +86,6 @@ class DebutPartie(Tk):
         radioButtonOffsetRow = 2
         radioButtonOffsetCol = 1
         joueurVar = list()
-        radiobuttons = list()
         joueurVarOffset = 0
         choixNbJoueurs = int
         if choixNbJoueurs == 2:
@@ -128,6 +129,11 @@ class DebutPartie(Tk):
         for jv in joueurVar:
             print(jv.get())
         pass
+
+    def changementDropdown(self, radiobuttons, nbjoueurs):
+        print(f"ici! {nbjoueurs.get()}")
+        pass
+
 
     def creer_menu_fichier(self):
         intvar = IntVar()
