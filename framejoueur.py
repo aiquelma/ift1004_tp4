@@ -1,14 +1,18 @@
-from tkinter import Frame, Label, Button
+from tkinter import Frame, Label, Button, DISABLED, ACTIVE
 from pymafia.joueur import Joueur
-
+from pymafia.partie import Partie
 
 class FrameJoueur(Frame):
     def __init__(self, master, joueur):
         super().__init__(master)
         self.label_joueur = Label(self, text=f"joueur{joueur.identifiant}")
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
-        self.button_dés = Button(self, text="rouler les dés")
+        self.button_dés = Button(self, text="rouler les dés", state=DISABLED)
         self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
+        # for joueur.identifiant in joueur:
+        #     if joueur.identifiant == self.joueur_courant:
+        #         self.button_dés = Button(self, text="rouler les dés", state=ACTIVE)
+        #         self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
         self.joueur = joueur
         self.last_grid = {}
 

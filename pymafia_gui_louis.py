@@ -1,5 +1,5 @@
 from tkinter import Tk, RAISED, ACTIVE, DISABLED, Label, StringVar, OptionMenu, Button, Menu, IntVar, Text, Toplevel, \
-    Radiobutton, FLAT, LEFT
+    Radiobutton, FLAT, LEFT, W, E
 from framejoueur import FrameJoueurDroitBas, FrameJoueurDroitHaut, FrameJoueurGaucheBas, FrameJoueurGaucheHaut
 from pymafia.partie import Partie
 from random import randint
@@ -29,18 +29,17 @@ class FenetrePymafia(Tk):
         hasard = randint(1, (len(self.framesJoueurs))) - 1
         partie.premier_joueur = self.framesJoueurs[hasard]
         print(f"joueur {hasard + 1}")
-        demande_de_sens = Label(self, text="Dans quel sens jouer", font=("courrier", 12))
-        demande_de_sens.grid(row=0, column=0)
-        self.label = Label(self, text=f"Le premier joueur est le joueur {hasard + 1}.", relief=RAISED)
-        self.label.grid(row=1, column=0, padx=10, pady=10)
-        bouton_select1 = Button(self, text="vers la gauche")
-        bouton_select2 = Button(self, text="vers la droite")
+        demande_de_sens = Label(self, text=f"Le premier joueur est le joueur {hasard + 1}, dans quel sens voulez-vous "
+                                           f"jouer?", font=("courrier", 12), relief=RAISED)
+        demande_de_sens.grid(row=0, column=0, padx=10, pady=10)
+        bouton_select1 = Button(self, text="vers la gauche", font=("courrier", 12))
+        bouton_select2 = Button(self, text="vers la droite", font=("courrier", 12))
         bouton_select1.bind("<ButtonRelease-1>", lambda event: self.sens_de_jeu(-1, bouton_select1, bouton_select2,
                                                                                 demande_de_sens))
-        bouton_select1.grid(row=0, column=1)
+        bouton_select1.grid(row=1, column=0, sticky=W)
         bouton_select2.bind("<ButtonRelease-1>", lambda event: self.sens_de_jeu(1, bouton_select1, bouton_select2,
                                                                                 demande_de_sens))
-        bouton_select2.grid(row=0, column=2)
+        bouton_select2.grid(row=1, column=0, sticky=E)
         for fj in self.framesJoueurs:
             fj.last_grid = fj.grid_info()
             fj.grid_forget()
@@ -80,14 +79,19 @@ class DebutPartie(Tk):
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
 
         # Création des boutons radios
-        typeJoueur = [("Humain", 101, "Ordinateur", 102), ("Humain", 201, "Ordinateur", 202), ("Humain", 301,
-                                                                                               "Ordinateur", 302),
-                      ("Humain", 401, "Ordinateur", 402)]
+        typeJoueur = [("Humain", 101, "Ordinateur", 102), ("Humain", 201, "Ordinateur", 202),
+                      ("Humain", 301, "Ordinateur", 302), ("Humain", 401, "Ordinateur", 402)]
         radioButtonOffsetRow = 2
         radioButtonOffsetCol = 1
         joueurVar = list()
         radiobuttons = list()
         joueurVarOffset = 0
+        choixNbJoueurs = int
+        if choixNbJoueurs == 2:
+            radiobuttons.append += 1
+        elif joueurVar == 3:
+            radiobuttons.append += 2
+
         for joueurType1, joueurVal1, joueurType2, joueurVal2 in typeJoueur:
             joueurVar.append(StringVar())
             Label(self, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol
