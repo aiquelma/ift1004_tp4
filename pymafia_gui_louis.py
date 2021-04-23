@@ -1,4 +1,4 @@
-from tkinter import Tk, RAISED, ACTIVE,DISABLED, Label, StringVar, OptionMenu, Button, Menu, IntVar, Text, Toplevel, \
+from tkinter import Tk, RAISED, ACTIVE, DISABLED, Label, StringVar, OptionMenu, Button, Menu, IntVar, Text, Toplevel, \
     Radiobutton, FLAT, LEFT
 from framejoueur import FrameJoueurDroitBas, FrameJoueurDroitHaut, FrameJoueurGaucheBas, FrameJoueurGaucheHaut
 from pymafia.partie import Partie
