@@ -30,10 +30,10 @@ class FenetrePymafia(Tk):
         partie.premier_joueur = self.framesJoueurs[hasard]
         print(f"joueur {hasard + 1}")
         demande_de_sens = Label(self, text=f"Le premier joueur est le joueur {hasard + 1}, dans quel sens voulez-vous "
-                                           f"jouer?", font=("courrier", 12), relief=RAISED)
+                                           f"jouer?", font=("courrier", 12), relief=FLAT)
         demande_de_sens.grid(row=0, column=0, padx=10, pady=10)
-        bouton_select1 = Button(self, text="vers la gauche", font=("courrier", 12))
-        bouton_select2 = Button(self, text="vers la droite", font=("courrier", 12))
+        bouton_select1 = Button(self, text="vers la gauche", font=("courrier", 12), pady=5, padx=5)
+        bouton_select2 = Button(self, text="vers la droite", font=("courrier", 12), pady=5, padx=5)
         bouton_select1.bind("<ButtonRelease-1>", lambda event: self.sens_de_jeu(-1, bouton_select1, bouton_select2,
                                                                                 demande_de_sens))
         bouton_select1.grid(row=1, column=0, sticky=W)
