@@ -1,6 +1,5 @@
-from tkinter import Frame, Label, Button, DISABLED, ACTIVE, Tk
+from tkinter import Frame, Label, Button, DISABLED, ACTIVE
 from pymafia.joueur import Joueur
-from pymafia.partie import Partie
 
 
 class FrameJoueur(Frame):
@@ -8,21 +7,20 @@ class FrameJoueur(Frame):
         super().__init__(master)
         self.label_joueur = Label(self, text=f"joueur{joueur.identifiant}")
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
-        self.button_dés = Button(self, text="rouler les dés", state=DISABLED)
-        self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
-        #  le .config ne fonctionne pas, j'ai essayé kek trucs de stackoverflow mais j'ai pas eu le temps de trouver la solution.
-        #  Je peux continuer demain si tu veux!'
-        # for joueur.identifiant in joueur:
-        #     if joueur.identifiant == self.joueur_courant:
-        #         self.button_dés = Button(self, text="rouler les dés", state=ACTIVE)
-        #         self.button_dés.bind("<ButtonRelease-1>", lambda event: self.mettre_a_jour_dés(joueur))
+        self.button_dés = Button(self, text="rouler les dés", state=DISABLED,
+                                 command=lambda: self.mettre_a_jour_dés(joueur))
         self.joueur = joueur
         self.last_grid = {}
 
     def mettre_a_jour_dés(self, joueur: Joueur):
         joueur.rouler_dés()
         self.label_dés['text'] = joueur.dés
-        return
+
+    def rouler_dés_actif(self):
+        self.button_dés['state'] = ACTIVE
+
+    def rouler_dés_inactif(self):
+        self.button_dés['state'] = DISABLED
 
 
 class FrameJoueurGaucheHaut(FrameJoueur):

@@ -1,5 +1,5 @@
 from tkinter import Tk, RAISED, ACTIVE, DISABLED, Label, StringVar, OptionMenu, Button, Menu, IntVar, Text, Toplevel, \
-    Radiobutton, FLAT, LEFT, W, E
+    Radiobutton, FLAT, LEFT, W, E, Frame
 from framejoueur import FrameJoueurDroitBas, FrameJoueurDroitHaut, FrameJoueurGaucheBas, FrameJoueurGaucheHaut
 from pymafia.partie import Partie
 from random import randint
@@ -25,15 +25,16 @@ class FenetrePymafia(Tk):
             self.framesJoueurs[3].grid(row=2, column=0, padx=60, pady=60)
         self.debuter_la_partie(self.partie)
 
+
     def debuter_la_partie(self, partie: Partie):
         hasard = randint(1, (len(self.framesJoueurs))) - 1
         partie.premier_joueur = self.framesJoueurs[hasard]
         print(f"joueur {hasard + 1}")
         demande_de_sens = Label(self, text=f"Le premier joueur est le joueur {hasard + 1}, dans quel sens voulez-vous "
-                                           f"jouer?", font=("courrier", 12), relief=RAISED)
+                                           f"jouer?", font=("courrier", 12), relief=FLAT)
         demande_de_sens.grid(row=0, column=0, padx=10, pady=10)
-        bouton_select1 = Button(self, text="vers la gauche", font=("courrier", 12))
-        bouton_select2 = Button(self, text="vers la droite", font=("courrier", 12))
+        bouton_select1 = Button(self, text="vers la gauche", font=("courrier", 12), pady=5, padx=5)
+        bouton_select2 = Button(self, text="vers la droite", font=("courrier", 12), pady=5, padx=5)
         bouton_select1.bind("<ButtonRelease-1>", lambda event: self.sens_de_jeu(-1, bouton_select1, bouton_select2,
                                                                                 demande_de_sens))
         bouton_select1.grid(row=1, column=0, sticky=W)
@@ -49,14 +50,26 @@ class FenetrePymafia(Tk):
         bouton_select1.destroy()
         bouton_select2.destroy()
         demande_de_sens.destroy()
-#        self.label.destroy()
-        # Remettre le grid comme il était et distribuer les 5 dés aux joueurs
         for fj in self.framesJoueurs:
             fj.grid(column=fj.last_grid['column'], row=fj.last_grid['row'], padx=fj.last_grid['padx'],
                     pady=fj.last_grid['pady'])
         self.partie.reinitialiser_dés_joueurs()
         for fj in self.framesJoueurs:
             fj.mettre_a_jour_dés(fj.joueur)
+        self.debuter_rondes()
+
+    def debuter_rondes(self):
+        self.identifier_joueur_courant()
+        pass
+
+    def identifier_joueur_courant(self):
+        for joueur in self.framesJoueurs:
+            if self.partie.joueur_courant == joueur.joueur:
+                joueur.rouler_dés_actif()
+            else:
+                joueur.rouler_dés_inactif()
+
+
 
 
 class DebutPartie(Tk):
@@ -64,27 +77,69 @@ class DebutPartie(Tk):
         super().__init__()
         self.title("PyMafia - Débuter une partie")
         self.resizable(0, 0)
+        self.framesuperieur = Frame(self)
+        self.framesuperieur.grid(row=0, column=0, columnspan=3)
+        self.framesuperieur['highlightthickness'] = 0
+        self.framesuperieur['highlightbackground'] = 'black'
+        self.framechoix = Frame(self)
+        self.framechoix.grid(row=1, column=0, columnspan=3)
+        self.framechoix['highlightthickness'] = 0
+        self.framechoix['highlightbackground'] = 'black'
+        self.frameinferieur = Frame(self)
+        self.frameinferieur.grid(row=4, column=0, columnspan=3)
+        self.frameinferieur['highlightthickness'] = 0
+        self.frameinferieur['highlightbackground'] = 'black'
         debuttxt = "Bienvenue à PyMafia, pour débuter une partie, veuillez indiquer le nombre de joueurs: "
-        self.label = Label(self, text=debuttxt, relief=FLAT)
+        self.label = Label(self.framesuperieur , text=debuttxt, relief=FLAT)
         self.label.grid(row=0, column=0, padx=10, pady=10)
         # Création du DropDown
         choixNbJoueurs = ["2", "3", "4"]
         nbJoueur = StringVar(self)
         nbJoueur.set(choixNbJoueurs[0])
-        self.totalJoueurs = OptionMenu(self, nbJoueur, *choixNbJoueurs)
+        radiobuttons = list()
+        self.totalJoueurs = OptionMenu(self.framesuperieur, nbJoueur, *choixNbJoueurs,
+                                       command= lambda event: self.changementDropdown(self.framechoix, radiobuttons, nbJoueur))
         self.totalJoueurs.grid(row=0, column=1, padx=10, pady=10)
         # Fin DropDown
-        self.labelChoixHumainOrdinateur = Label(self, text="Veuillez choisir le type de joueur:", relief=FLAT,
-                                                justify=LEFT, anchor="w")
+        self.labelChoixHumainOrdinateur = Label(self.framechoix, text="Veuillez choisir le type de joueur:",
+                                                relief=FLAT,
+                                                justify=LEFT,
+                                                anchor="w")
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
+        # Création bouton de démarrage de jeu ##
+        self.debuterPartie = Button(self.frameinferieur,  text="Let's do this baby!")
+        self.joueurVar, self.framechoix = self.créer_boutons_radios(self.framechoix, radiobuttons, int(nbJoueur.get()))
 
+        # Juste le bouton ici:
+        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencerPartie(nbJoueur, self.joueurVar))
+        self.debuterPartie.grid(row =int(nbJoueur.get()) + 2, column=1, padx=10, pady=10)
+        self.creer_menu_fichier()
+
+    def changementDropdown(self, master, radiobuttons, nbjoueurs):
+        self.framechoix.destroy()
+        self.framechoix = Frame(self)
+        self.framechoix.grid(row=1, column=0, columnspan=3)
+        self.framechoix['highlightthickness'] = 0
+        self.framechoix['highlightbackground'] = 'black'
+        self.labelChoixHumainOrdinateur = Label(self.framechoix, text="Veuillez choisir le type de joueur:",
+                                                relief=FLAT,
+                                                justify=LEFT,
+                                                anchor="w")
+        self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
+        self.joueurVar, self.framechoix = self.créer_boutons_radios(self.framechoix, radiobuttons, int(nbjoueurs.get()))
+
+        print("x")
+
+        #self.joueurVar = self.créer_boutons_radios(radiobuttons, int(nbjoueurs.get()))
+
+
+    def créer_boutons_radios(self, master, radiobuttons, nombre):
         # Création des boutons radios
         typeJoueur = [("Humain", 101, "Ordinateur", 102), ("Humain", 201, "Ordinateur", 202),
                       ("Humain", 301, "Ordinateur", 302), ("Humain", 401, "Ordinateur", 402)]
         radioButtonOffsetRow = 2
         radioButtonOffsetCol = 1
         joueurVar = list()
-        radiobuttons = list()
         joueurVarOffset = 0
         choixNbJoueurs = int
         if choixNbJoueurs == 2:
@@ -93,25 +148,23 @@ class DebutPartie(Tk):
             radiobuttons.append += 2
 
         for joueurType1, joueurVal1, joueurType2, joueurVal2 in typeJoueur:
-            joueurVar.append(StringVar())
-            Label(self, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol
-                                                                  - 1)
-            radiobuttons.append(Radiobutton(self, text=joueurType1, variable=joueurVar[joueurVarOffset],
-                                            value=joueurVal1, padx=0, pady=0, tristatevalue=1).grid
-                                (row=radioButtonOffsetRow, column=radioButtonOffsetCol))
-            radiobuttons.append(Radiobutton(self, text=joueurType2, variable=joueurVar[joueurVarOffset],
-                                            value=joueurVal2, padx=0, pady=0).grid(row=radioButtonOffsetRow,
-                                                                                   column=radioButtonOffsetCol + 1))
-            joueurVar[joueurVarOffset].set(joueurVal1)  # Permet de sélectionner par défaut Humain
-            radioButtonOffsetRow += 1
-            joueurVarOffset += 1
+            if nombre > 0:
+                joueurVar.append(StringVar())
+                Label(master, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol
+                                                                                                       - 1)
+                Radiobutton(master, text=joueurType1, variable=joueurVar[joueurVarOffset],
+                            value=joueurVal1, padx=0, pady=0, tristatevalue=1).\
+                    grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol)
+                Radiobutton(master, text=joueurType2, variable=joueurVar[joueurVarOffset],
+                            value=joueurVal2, padx=0, pady=0).\
+                    grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol + 1)
+                joueurVar[joueurVarOffset].set(joueurVal1)  # Permet de sélectionner par défaut Humain
+                radioButtonOffsetRow += 1
+                joueurVarOffset += 1
+            nombre -= 1
+        return joueurVar, master
         # Fin de création des boutons radios
 
-        # Création bouton de démarrage de jeu ##
-        self.debuterPartie = Button(self,  text="Let's do this baby!")
-        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencerPartie(nbJoueur, joueurVar))
-        self.debuterPartie.grid(row=radioButtonOffsetRow+1, column=1, padx=10, pady=10)
-        self.creer_menu_fichier()
 
     def commencerPartie(self, nbJoueur: StringVar, joueurVar):
         nombre_de_joueurs = int(nbJoueur.get())
@@ -128,6 +181,7 @@ class DebutPartie(Tk):
         for jv in joueurVar:
             print(jv.get())
         pass
+
 
     def creer_menu_fichier(self):
         intvar = IntVar()
