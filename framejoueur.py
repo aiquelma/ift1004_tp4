@@ -8,13 +8,15 @@ class FrameJoueur(Frame):
         self.label_joueur = Label(self, text=f"joueur{joueur.identifiant}")
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
         self.button_dés = Button(self, text="rouler les dés", state=DISABLED,
-                                 command=lambda: self.mettre_a_jour_dés(joueur))
+                                 command=lambda: self.mettre_a_jour_dés(master, joueur))
         self.joueur = joueur
         self.last_grid = {}
 
-    def mettre_a_jour_dés(self, joueur: Joueur):
+    def mettre_a_jour_dés(self, master, joueur: Joueur):
         joueur.rouler_dés()
         self.label_dés['text'] = joueur.dés
+        self.rouler_dés_inactif()
+        master.rouler_dé_complet()
 
     def rouler_dés_actif(self):
         self.button_dés['state'] = ACTIVE
