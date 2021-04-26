@@ -42,6 +42,10 @@ class FenetrePymafia(Tk):
         self.config(menu=self.menu)
 
     def validation_de_sortie(self):
+        """
+            fonction qui demande de valider si on veut vraiment quitter la partie en cours.
+            :return: None
+        """
         message = "Vous avez une partie en cours. Désirez-vous réellement quitter la partie?"
         if messagebox.askokcancel("Annuler", message, default="cancel", icon="warning"):
             self.partie_en_cours = True
@@ -378,9 +382,20 @@ class DebutPartie(Tk):
         self.premier_menu = Menu(self.menu, tearoff=0)
         self.premier_menu.add_command(label='Règlements', command=self.afficher_reglements)
         self.premier_menu.add_separator()
-        self.premier_menu.add_command(label='Quitter', command=self.destroy)
+        self.premier_menu.add_command(label='Quitter', command=self.validation_de_sortie)
         self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
         self.config(menu=self.menu)
+
+    def validation_de_sortie(self):
+        """
+        fonction qui demande de valider si on veut vraiment quitter la partie en cours.
+        :return: None
+        """
+        message = "Vous avez une partie en cours. Désirez-vous réellement quitter la partie?"
+        if messagebox.askokcancel("Annuler", message, default="cancel", icon="warning"):
+            self.destroy()
+        else:
+            pass
 
     def changement_dropdown(self, radiobuttons, nbjoueurs):
         """
