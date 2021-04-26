@@ -13,7 +13,7 @@ class FrameJoueur(Frame):
         self.joueur = joueur
         self.last_grid = {}
         self['highlightthickness'] = 1
-        self['highlightbackground']  = "black"
+        self['highlightbackground'] = "black"
 
     def joueur_lance_dés(self, master, joueur: Joueur):
         self.mettre_a_jour_dés(joueur)

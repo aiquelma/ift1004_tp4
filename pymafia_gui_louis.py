@@ -8,16 +8,17 @@ from time import sleep
 # Variable globale pour le ronde maximum qu'on peut jouer
 RONDEMAX = 10
 
+
 class FenetrePymafia(Tk):
     def __init__(self, nombre_de_joueurs):
         super().__init__()
-        self.geometry("800x500")
+        self.geometry("800x600")
         self.title("PyMafia")
         self.rondes = 1
         self.resizable(0, 0)
         self.framesJoueurs = list()
         self.main_container = Frame(self)
-        self.main_container.grid(row=0, rowspan=10, column=8, columnspan=300, sticky="nsew")
+        self.main_container.grid(row=3, rowspan=10, column=0, columnspan=300, sticky="nsew")
         self.partie = self.créerPartie(nombre_de_joueurs)
         self.frameEtat = Frame(self.main_container)
         self.frameEtat.grid(row=0, column=8, columnspan=300, sticky="nsew")
@@ -81,20 +82,20 @@ class FenetrePymafia(Tk):
     def créer_état(self, MessageEtat=""):
         for child in self.frameEtat.winfo_children():
             child.destroy()
-        self.frameEtat.grid(row=0, column=8, rowspan=300, sticky="nsew")
+        self.frameEtat.grid(row=3, column=0, rowspan=300, sticky="nsew")
         self.statusFrameJoueurs = list()
         ligne = 0
         self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"Score\t\t", anchor=NE).grid(row=0, column=0))
         for fj in self.framesJoueurs:
             self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"Joueur {fj.joueur.identifiant}\t" \
                                                                       f"-->\t{fj.joueur.score}") \
-                                           .grid(row=1 + ligne, column=0))
+                                           .grid(row=2 + ligne, column=0))
             ligne += 1
         self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"\nNombre de rondes\t{self.partie.ronde}\n\n")
-                                       .grid(row=2 + ligne, column=0))
+                                       .grid(row=3 + ligne, column=0))
         message_generaux = list()
         self.statusFrameJoueurs.append(message_generaux)
-        self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"Messages\t\t\n\n{MessageEtat}") \
+        self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"\n\nMessages\t\t\n\n{MessageEtat}") \
                                        .grid(row=3 + ligne, column=0))
         self.debuter_rondes()
 
@@ -120,8 +121,8 @@ class FenetrePymafia(Tk):
             for joueur in self.framesJoueurs:
                 joueur.désactiver_dés()
             message = f"Le joueur {self.partie.joueur_courant.identifiant} a gagné la ronde " \
-                    f"{self.partie.ronde}. Cliquer OK pour calculer jouer les dés de fin de ronde et " \
-                        f"calculer les points."
+                      f"{self.partie.ronde}. Cliquer OK pour calculer jouer les dés de fin de ronde et " \
+                      f"calculer les points."
             messagebox.showinfo("Fin de ronde", message)
             self.partie.jouer_dés_en_fin_de_ronde()
             self.maj_des()
@@ -192,7 +193,7 @@ class DebutPartie(Tk):
         self.framechoix['highlightthickness'] = 0
         self.framechoix['highlightbackground'] = 'black'
         self.frameinferieur = Frame(self)
-        self.frameinferieur.grid(row=4, column=0, columnspan=3)
+        self.frameinferieur.grid(row=2, column=0, columnspan=3)
         self.frameinferieur['highlightthickness'] = 0
         self.frameinferieur['highlightbackground'] = 'black'
         debuttxt = "Bienvenue à PyMafia, pour débuter une partie, veuillez indiquer le nombre de joueurs: "
