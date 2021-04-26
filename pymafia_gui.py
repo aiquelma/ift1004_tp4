@@ -22,14 +22,14 @@ class FenetrePymafia(Tk):
         self.framesJoueurs = list()
         self.main_container = Frame(self)
         self.main_container.grid(row=3, rowspan=10, column=0, columnspan=300, sticky="nsew")
-        self.partie = self.créerPartie(nombre_de_joueurs)
+        self.partie = self.créer_partie(nombre_de_joueurs)
         self.frameEtat = Frame(self.main_container)
         self.frameEtat.grid(row=0, column=8, columnspan=300, sticky="nsew")
         self.creer_menu_fichier()
         self.debuter_la_partie()
         self.partie_en_cours = True
 
-    def créerPartie(self, nombre_de_joueurs):
+    def créer_partie(self, nombre_de_joueurs):
         """
         Crée les sous-frames contenant les joueurs
         :param nombre_de_joueurs:
@@ -103,10 +103,10 @@ class FenetrePymafia(Tk):
             fj.mettre_a_jour_affichage_dés(fj.joueur)
         self.créer_état(f"Joueur {self.partie.premier_joueur.identifiant} débutera la partie")
 
-    def créer_état(self, MessageEtat= " " * 40):
+    def créer_état(self, message_etat=" " * 40):
         """
         Créer frame en bas de fenêtre pour afficher le score et les messages du jeu
-        :param MessageEtat: Message optionnel qui doit être afficher dans la fenêtre de jeu
+        :param message_etat: Message optionnel qui doit être afficher dans la fenêtre de jeu
         :return:
         """
         for child in self.frameEtat.winfo_children():
@@ -120,9 +120,9 @@ class FenetrePymafia(Tk):
                                                                       f"-->\t{fj.joueur.score}",  justify=LEFT)
                                            .grid(row=2 + ligne, column=0))
             ligne += 1
-        self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"Nombre de rondes\t{self.partie.ronde}\n\n",  justify=LEFT)
-                                       .grid(row=3 + ligne, column=0))
-        self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"\n\nMessages\t\t\n\n{MessageEtat}", justify=LEFT)
+        self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"Nombre de rondes\t{self.partie.ronde}\n\n",
+                                             justify=LEFT).grid(row=3 + ligne, column=0))
+        self.statusFrameJoueurs.append(Label(self.frameEtat, text=f"\n\nMessages\t\t\n\n{message_etat}", justify=LEFT)
                                        .grid(row=4 + ligne, column=0))
         self.debuter_rondes()
 
@@ -143,12 +143,10 @@ class FenetrePymafia(Tk):
         nombre_1, nombre_6 = self.partie.verifier_dés_joueur_courant_pour_1_et_6()
         for joueur in self.framesJoueurs:
             joueur.mettre_a_jour_affichage_dés(joueur.joueur)
-        message_dé1 = ""
-        message_dé6 = ""
         if nombre_1 > 0:
-            message_dé1 = f"Vous avez obtenu {nombre_1} dé 1"
+            f"Vous avez obtenu {nombre_1} dé 1"
         if nombre_6 > 0:
-            message_dé1 = f"Vous avez obtenu {nombre_1} dé 6"
+            f"Vous avez obtenu {nombre_1} dé 6"
         self.afficher_déplacement_dés(nombre_1, nombre_6)
         self.partie.deplacer_les_dés_1_et_6(nombre_1, nombre_6)
 
@@ -173,21 +171,17 @@ class FenetrePymafia(Tk):
         """
         return self.partie.ronde <= RONDEMAX and self.nombre_joueur_actifs() > 1
 
-
     def créer_message_fin_de_partie(self):
         """
         Retourne chaine de caractère indiquant qui est le joueur gagnant
-        :return:
+        :return: message définissant le joueur gagnant
         """
-        message = ""
         indices_gagnant = self.partie.determiner_liste_gagnants()
         if len(indices_gagnant) > 1:
-            message = "Les joueurs gagnants sont: "
+            return f"Le gagnant est: {self.partie.joueurs.identifiant}."
         else:
-            message = "Le joueur gagnant est: "
-        for indice in indices_gagnant:
-            message = message + f"Joueur {self.partie.joueurs[indice].identifiant}"
-        return message
+            for indice in indices_gagnant:
+                return f"Les joueurs gagnants sont:{self.partie.joueurs[indice].identifiant} "
 
     def gérer_fin_partie_ou_ronde(self):
         """
@@ -290,9 +284,6 @@ class FenetrePymafia(Tk):
             for joueur in self.framesJoueurs:
                 if self.partie.joueur_courant == joueur.joueur:
                     joueur.activer_dés()
-                    ## si ordinateur:
-                        ## joueur.rouler_dés
-                        ##
                 else:
                     joueur.désactiver_dés()
         else:
@@ -323,10 +314,10 @@ class FenetrePymafia(Tk):
             if messagebox.askokcancel("Annuler", message, default="cancel", icon="warning"):
                 self.partie_en_cours = False
                 self.destroy()
-                nouvelle_partie = DebutPartie()
+                DebutPartie()
         else:
             self.destroy()
-            nouvelle_partie = DebutPartie()
+            DebutPartie()
 
 
 class DebutPartie(Tk):
@@ -359,7 +350,7 @@ class DebutPartie(Tk):
         nbJoueur.set(choixNbJoueurs[0])
         radiobuttons = list()
         self.totalJoueurs = OptionMenu(self.framesuperieur, nbJoueur, *choixNbJoueurs,
-                                       command=lambda event: self.changementDropdown(
+                                       command=lambda event: self.changement_dropdown(
                                                                                      radiobuttons, nbJoueur))
         self.totalJoueurs.grid(row=0, column=1, padx=10, pady=10)
         # Fin DropDown
@@ -370,11 +361,11 @@ class DebutPartie(Tk):
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
         self.debuterPartie = Button(self.frameinferieur, text="Let's do this baby!")
         self.joueurVar = self.créer_boutons_radios(radiobuttons, int(nbJoueur.get()))
-        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencerPartie(nbJoueur, self.joueurVar))
+        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencer_partie(nbJoueur, self.joueurVar))
         self.debuterPartie.grid(row=int(nbJoueur.get()) + 2, column=1, padx=10, pady=10)
         self.creer_menu_fichier()
 
-    def changementDropdown(self, radiobuttons, nbjoueurs):
+    def changement_dropdown(self, radiobuttons, nbjoueurs):
         """
         fonction évenementielle qui détecte un changement dans le dropdown du nombre de joueur
         Elle recrée les boutons radios sur demande
@@ -417,7 +408,7 @@ class DebutPartie(Tk):
             if nombre > 0:
                 joueurVar.append(StringVar())
                 Label(self.framechoix, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radioButtonOffsetRow,
-                                                                        column=radioButtonOffsetCol - 1)
+                                                                                 column=radioButtonOffsetCol - 1)
                 Radiobutton(self.framechoix, text=joueurType1, variable=joueurVar[joueurVarOffset],
                             value=joueurVal1, padx=0, pady=0, tristatevalue=1). \
                     grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol)
@@ -431,26 +422,27 @@ class DebutPartie(Tk):
         return joueurVar
         # Fin de création des boutons radios
 
-    def commencerPartie(self, nbJoueur: StringVar, joueurVar):
+    def commencer_partie(self, nb_joueur: StringVar, joueur_var):
         """
         Cette fonction permet de lancer le GUI du jeu PyMafia
 
-        :param nbJoueur: La variable contenant le menu dropdown du nombre de joueurs
-        :param joueurVar: Les valeurs des boutons radios indiquant humain ou ordinateur
+        :param nb_joueur: La variable contenant le menu dropdown du nombre de joueurs
+        :param joueur_var: Les valeurs des boutons radios indiquant humain ou ordinateur
         :return: None
         """
-        nombre_de_joueurs = int(nbJoueur.get())
-        self.lireBoutonRadio(joueurVar)
+        nombre_de_joueurs = int(nb_joueur.get())
+        self.lire_bouton_radio(joueur_var)
         self.destroy()
         Jouer = FenetrePymafia(nombre_de_joueurs)
         Jouer.mainloop()
 
-    def lireBoutonRadio(self, joueurVar):
+    @staticmethod
+    def lire_bouton_radio(joueur_var):
         # À développer, il faut définir quel joueur dans la liste est un humain, quel ne l'est pas.
-        # Ici, joueurVar contient la liste des choix des boutons radios
+        # Ici, joueur_var contient la liste des choix des boutons radios
         # Cette fonction doit extraire le nombre de joueur humains, j'ai défini les joueurs humain par #XX1
         # ordinateurs par #XX2
-        for jv in joueurVar:
+        for jv in joueur_var:
             print(jv.get())
         pass
 
@@ -483,7 +475,8 @@ class DebutPartie(Tk):
         Button(reglements, text="Fermer", command=reglements.destroy).grid(row=1, column=1)
         reglements.mainloop()
 
-    def regles_jeu(self):
+    @staticmethod
+    def regles_jeu():
         """
         Fait que retourner un string avec les instructions du jeu
         :return: string : règles du jeu
