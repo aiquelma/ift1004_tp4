@@ -15,7 +15,7 @@ class FenetrePymafia(Tk):
         :param nombre_de_joueurs: Nombre de joueurs humains
         """
         super().__init__()
-        self.geometry("800x600")
+        self.geometry("900x800")
         self.title("PyMafia")
         self.rondes = 1
         self.resizable(0, 0)
@@ -25,9 +25,21 @@ class FenetrePymafia(Tk):
         self.partie = self.créer_partie(nombre_de_joueurs)
         self.frameEtat = Frame(self.main_container)
         self.frameEtat.grid(row=0, column=8, columnspan=300, sticky="nsew")
-        self.creer_menu_fichier()
         self.debuter_la_partie()
         self.partie_en_cours = True
+        self.statusFrameJoueurs = list()
+        self.intvar = IntVar()
+        self.menu = Menu(self)
+        self.optionMenu = OptionMenu(self, self.intvar, 3, 4, 5, 6)
+        self.premier_menu = Menu(self.menu, tearoff=0)
+        self.menu = Menu(self)
+        self.optionMenu = OptionMenu(self, self.intvar, 3, 4, 5, 6)
+        self.premier_menu = Menu(self.menu, tearoff=0)
+        self.premier_menu.add_command(label='Relancer une partie', command=self.nouvelle_partie)
+        self.premier_menu.add_separator()
+        self.premier_menu.add_command(label='Quitter', command=self.destroy)
+        self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
+        self.config(menu=self.menu)
 
     def créer_partie(self, nombre_de_joueurs):
         """
@@ -63,9 +75,9 @@ class FenetrePymafia(Tk):
         mais ça ne me tente pas
         :return:
         """
-        LabelText = f"Le Joueur {self.partie.premier_joueur.identifiant} jouera en premier. " \
+        label_txt = f"Le Joueur {self.partie.premier_joueur.identifiant} jouera en premier. " \
                     f"Veuillez choisir dans quel sens nous devons jouer."
-        demande_de_sens = Label(self, text=LabelText, font=("courrier", 12), relief=FLAT)
+        demande_de_sens = Label(self, text=label_txt, font=("courrier", 12), relief=FLAT)
         demande_de_sens.grid(row=0, column=0, padx=10, pady=10)
 
         bouton_select1 = Button(self, text="Sens horaire", font=("courrier", 12), pady=5, padx=5)
@@ -177,11 +189,15 @@ class FenetrePymafia(Tk):
         :return: message définissant le joueur gagnant
         """
         indices_gagnant = self.partie.determiner_liste_gagnants()
-        if len(indices_gagnant) > 1:
-            return f"Le gagnant est: {self.partie.joueurs.identifiant}."
+        if len(indices_gagnant) == 1:
+            gagnant = self.partie.joueurs[indices_gagnant[0]]
+            message = f"Le gagnant est le Joueur {gagnant.identifiant}."
         else:
+            message = f"Les joueurs gagnants sont les joueurs  "
             for indice in indices_gagnant:
-                return f"Les joueurs gagnants sont:{self.partie.joueurs[indice].identifiant} "
+                gagnant = self.partie.joueurs[indice]
+                message = message + f"Joueur {gagnant.identifiant} "
+        return message
 
     def gérer_fin_partie_ou_ronde(self):
         """
@@ -195,10 +211,10 @@ class FenetrePymafia(Tk):
         else:
             self.partie_en_cours = False
             self.désactiver_tous_les_dés()
-            message = str(self.créer_message_fin_de_partie)
+            message = str(self.créer_message_fin_de_partie())
             self.créer_état(message)
             message = self.partie.message_points_en_fin_de_partie()
-            message = message, "\nPour démarrer une nouvelle partie, utiliser le menu."
+            message = message + "\nPour démarrer une nouvelle partie, utiliser le menu."
             messagebox.showinfo("Fin de la partie", message)
 
     def rouler_dé_complet(self):
@@ -289,21 +305,6 @@ class FenetrePymafia(Tk):
         else:
             self.désactiver_tous_les_dés()
 
-    def creer_menu_fichier(self):
-        """
-        Cette fonction permet de créer le menu du logiciel pendant la partie
-        :return:
-        """
-        intvar = IntVar()
-        self.menu = Menu(self)
-        self.optionMenu = OptionMenu(self, intvar, 3, 4, 5, 6)
-        self.premier_menu = Menu(self.menu, tearoff=0)
-        self.premier_menu.add_command(label='Relancer une partie', command=self.nouvelle_partie)
-        self.premier_menu.add_separator()
-        self.premier_menu.add_command(label='Quitter', command=self.destroy)
-        self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
-        self.config(menu=self.menu)
-
     def nouvelle_partie(self):
         """
         Menu du logiciel - Relancer une partie - Permet de relancer une partie
@@ -345,13 +346,13 @@ class DebutPartie(Tk):
         self.label = Label(self.framesuperieur, text=debuttxt, relief=FLAT)
         self.label.grid(row=0, column=0, padx=10, pady=10)
         # Création du DropDown
-        choixNbJoueurs = ["2", "3", "4"]
-        nbJoueur = StringVar(self)
-        nbJoueur.set(choixNbJoueurs[0])
+        choix_nb_joueurs = ["2", "3", "4"]
+        nb_joueur = StringVar(self)
+        nb_joueur.set(choix_nb_joueurs[0])
         radiobuttons = list()
-        self.totalJoueurs = OptionMenu(self.framesuperieur, nbJoueur, *choixNbJoueurs,
+        self.totalJoueurs = OptionMenu(self.framesuperieur, nb_joueur, *choix_nb_joueurs,
                                        command=lambda event: self.changement_dropdown(
-                                                                                     radiobuttons, nbJoueur))
+                                                                                     radiobuttons, nb_joueur))
         self.totalJoueurs.grid(row=0, column=1, padx=10, pady=10)
         # Fin DropDown
         self.labelChoixHumainOrdinateur = Label(self.framechoix, text="Veuillez choisir le type de joueur:",
@@ -360,10 +361,18 @@ class DebutPartie(Tk):
                                                 anchor="w")
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
         self.debuterPartie = Button(self.frameinferieur, text="Let's do this baby!")
-        self.joueurVar = self.créer_boutons_radios(radiobuttons, int(nbJoueur.get()))
-        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencer_partie(nbJoueur, self.joueurVar))
-        self.debuterPartie.grid(row=int(nbJoueur.get()) + 2, column=1, padx=10, pady=10)
-        self.creer_menu_fichier()
+        self.joueurVar = self.créer_boutons_radios(radiobuttons, int(nb_joueur.get()))
+        self.debuterPartie.bind("<ButtonRelease-1>", lambda event: self.commencer_partie(nb_joueur, self.joueurVar))
+        self.debuterPartie.grid(row=int(nb_joueur.get()) + 2, column=1, padx=10, pady=10)
+        intvar = IntVar()
+        self.menu = Menu(self)
+        self.optionMenu = OptionMenu(self, intvar, 3, 4, 5, 6)
+        self.premier_menu = Menu(self.menu, tearoff=0)
+        self.premier_menu.add_command(label='Règlements', command=self.afficher_reglements)
+        self.premier_menu.add_separator()
+        self.premier_menu.add_command(label='Quitter', command=self.destroy)
+        self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
+        self.config(menu=self.menu)
 
     def changement_dropdown(self, radiobuttons, nbjoueurs):
         """
@@ -392,34 +401,34 @@ class DebutPartie(Tk):
         :param nombre: Le nombre de boutons radios à créer (nombre de joueurs)
         :return: Retourne la variable des boutons radios ainsi que le frame
         """
-        typeJoueur = [("Humain", 101, "Ordinateur", 102), ("Humain", 201, "Ordinateur", 202),
-                      ("Humain", 301, "Ordinateur", 302), ("Humain", 401, "Ordinateur", 402)]
-        radioButtonOffsetRow = 2
-        radioButtonOffsetCol = 1
-        joueurVar = list()
-        joueurVarOffset = 0
-        choixNbJoueurs = int
-        if choixNbJoueurs == 2:
+        type_joueur = [("Humain", 101, "Ordinateur", 102), ("Humain", 201, "Ordinateur", 202),
+                       ("Humain", 301, "Ordinateur", 302), ("Humain", 401, "Ordinateur", 402)]
+        radio_button_offset_row = 2
+        radio_button_offset_col = 1
+        joueur_var = list()
+        joueur_var_offset = 0
+        choix_nb_joueurs = int
+        if choix_nb_joueurs == 2:
             radiobuttons.append += 1
-        elif joueurVar == 3:
+        elif joueur_var == 3:
             radiobuttons.append += 2
 
-        for joueurType1, joueurVal1, joueurType2, joueurVal2 in typeJoueur:
+        for joueurType1, joueurVal1, joueurType2, joueurVal2 in type_joueur:
             if nombre > 0:
-                joueurVar.append(StringVar())
-                Label(self.framechoix, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radioButtonOffsetRow,
-                                                                                 column=radioButtonOffsetCol - 1)
-                Radiobutton(self.framechoix, text=joueurType1, variable=joueurVar[joueurVarOffset],
+                joueur_var.append(StringVar())
+                Label(self.framechoix, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radio_button_offset_row,
+                                                                                 column=radio_button_offset_col - 1)
+                Radiobutton(self.framechoix, text=joueurType1, variable=joueur_var[joueur_var_offset],
                             value=joueurVal1, padx=0, pady=0, tristatevalue=1). \
-                    grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol)
-                Radiobutton(self.framechoix, text=joueurType2, variable=joueurVar[joueurVarOffset],
+                    grid(row=radio_button_offset_row, column=radio_button_offset_col)
+                Radiobutton(self.framechoix, text=joueurType2, variable=joueur_var[joueur_var_offset],
                             value=joueurVal2, padx=0, pady=0). \
-                    grid(row=radioButtonOffsetRow, column=radioButtonOffsetCol + 1)
-                joueurVar[joueurVarOffset].set(joueurVal1)  # Permet de sélectionner par défaut Humain
-                radioButtonOffsetRow += 1
-                joueurVarOffset += 1
+                    grid(row=radio_button_offset_row, column=radio_button_offset_col + 1)
+                joueur_var[joueur_var_offset].set(joueurVal1)  # Permet de sélectionner par défaut Humain
+                radio_button_offset_row += 1
+                joueur_var_offset += 1
             nombre -= 1
-        return joueurVar
+        return joueur_var
         # Fin de création des boutons radios
 
     def commencer_partie(self, nb_joueur: StringVar, joueur_var):
@@ -433,8 +442,8 @@ class DebutPartie(Tk):
         nombre_de_joueurs = int(nb_joueur.get())
         self.lire_bouton_radio(joueur_var)
         self.destroy()
-        Jouer = FenetrePymafia(nombre_de_joueurs)
-        Jouer.mainloop()
+        jouer_partie = FenetrePymafia(nombre_de_joueurs)
+        jouer_partie.mainloop()
 
     @staticmethod
     def lire_bouton_radio(joueur_var):
@@ -442,24 +451,10 @@ class DebutPartie(Tk):
         # Ici, joueur_var contient la liste des choix des boutons radios
         # Cette fonction doit extraire le nombre de joueur humains, j'ai défini les joueurs humain par #XX1
         # ordinateurs par #XX2
-        for jv in joueur_var:
-            print(jv.get())
+        # concept mauvais, on ne l'utilisera pas finalement, à développer pour le TP6 !
+        #for jv in joueur_var:
+        #    print(jv.get())
         pass
-
-    def creer_menu_fichier(self):
-        """
-        Cette fonction permet de créer le menu pour la fenêtre initiale.
-        :return:
-        """
-        intvar = IntVar()
-        self.menu = Menu(self)
-        self.optionMenu = OptionMenu(self, intvar, 3, 4, 5, 6)
-        self.premier_menu = Menu(self.menu, tearoff=0)
-        self.premier_menu.add_command(label='Règlements', command=self.afficher_reglements)
-        self.premier_menu.add_separator()
-        self.premier_menu.add_command(label='Quitter', command=self.destroy)
-        self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
-        self.config(menu=self.menu)
 
     def afficher_reglements(self):
         """

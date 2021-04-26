@@ -10,7 +10,7 @@ class FrameJoueur(Frame):
         :param joueur: définie la référence du joueur.
         """
         super().__init__(master)
-        padding = " " * 120
+        padding = " " * 110
         self.label_joueur = Label(self, text=f"Joueur {joueur.identifiant}\n{padding}")
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
         self.button_dés = Button(self, text="rouler les dés", state=DISABLED,
