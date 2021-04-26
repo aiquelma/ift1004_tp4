@@ -1,6 +1,6 @@
 from tkinter import Tk, RAISED, Label, StringVar, OptionMenu, Button, Menu, IntVar, \
-    Radiobutton, FLAT, LEFT, W, E, Frame, messagebox
-from framejoueur import FrameJoueurDroitBas, FrameJoueurDroitHaut, FrameJoueurGaucheBas, FrameJoueurGaucheHaut
+    Radiobutton, FLAT, LEFT, W, E, Frame, messagebox, DISABLED, ACTIVE
+from pymafia.joueur import Joueur
 from pymafia.partie import Partie
 from random import randint
 
@@ -357,7 +357,7 @@ class DebutPartie(Tk):
         # Fin DropDown
         self.labelChoixHumainOrdinateur = Label(self.framechoix, text="Veuillez choisir le type de joueur:",
                                                 relief=FLAT,
-                                                justify=LEFT,
+                                                justify=LEFT, state=DISABLED,
                                                 anchor="w")
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
         self.debuterPartie = Button(self.frameinferieur, text="Let's do this baby!")
@@ -389,7 +389,7 @@ class DebutPartie(Tk):
         self.framechoix['highlightbackground'] = 'black'
         self.labelChoixHumainOrdinateur = Label(self.framechoix, text="Veuillez choisir le type de joueur:",
                                                 relief=FLAT,
-                                                justify=LEFT,
+                                                justify=LEFT, state=DISABLED,
                                                 anchor="w")
         self.labelChoixHumainOrdinateur.grid(row=1, column=0, padx=10, pady=10)
         self.joueurVar = self.créer_boutons_radios(radiobuttons, int(nbjoueurs.get()))
@@ -416,12 +416,12 @@ class DebutPartie(Tk):
         for joueurType1, joueurVal1, joueurType2, joueurVal2 in type_joueur:
             if nombre > 0:
                 joueur_var.append(StringVar())
-                Label(self.framechoix, text=f"Joueur {str(joueurVal1)[0]}").grid(row=radio_button_offset_row,
-                                                                                 column=radio_button_offset_col - 1)
-                Radiobutton(self.framechoix, text=joueurType1, variable=joueur_var[joueur_var_offset],
+                Label(self.framechoix, text=f"Joueur {str(joueurVal1)[0]}", state=DISABLED).\
+                    grid(row=radio_button_offset_row, column=radio_button_offset_col - 1)
+                Radiobutton(self.framechoix, text=joueurType1, variable=joueur_var[joueur_var_offset], state=DISABLED,
                             value=joueurVal1, padx=0, pady=0, tristatevalue=1). \
                     grid(row=radio_button_offset_row, column=radio_button_offset_col)
-                Radiobutton(self.framechoix, text=joueurType2, variable=joueur_var[joueur_var_offset],
+                Radiobutton(self.framechoix, text=joueurType2, variable=joueur_var[joueur_var_offset], state=DISABLED,
                             value=joueurVal2, padx=0, pady=0). \
                     grid(row=radio_button_offset_row, column=radio_button_offset_col + 1)
                 joueur_var[joueur_var_offset].set(joueurVal1)  # Permet de sélectionner par défaut Humain
@@ -452,7 +452,7 @@ class DebutPartie(Tk):
         # Cette fonction doit extraire le nombre de joueur humains, j'ai défini les joueurs humain par #XX1
         # ordinateurs par #XX2
         # concept mauvais, on ne l'utilisera pas finalement, à développer pour le TP6 !
-        #for jv in joueur_var:
+        # for jv in joueur_var:
         #    print(jv.get())
         pass
 
@@ -492,6 +492,119 @@ class DebutPartie(Tk):
           le donnent au joueur gagnant.
           La partie compte un maximum de 10 rondes et le gagnant est celui qui aura le plus haut score à
           la fin de ces 10 rondes à moins d'être le seul joueur à avoir des points avant ce temps."""
+
+
+class FrameJoueur(Frame):
+    def __init__(self, master, joueur):
+        """
+        Classe qui gère le frame pour chaque joueurs.
+        :param master: est le frame parent.
+        :param joueur: définie la référence du joueur.
+        """
+        super().__init__(master)
+        padding = " " * 110
+        self.label_joueur = Label(self, text=f"Joueur {joueur.identifiant}\n{padding}")
+        self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
+        self.button_dés = Button(self, text="rouler les dés", state=DISABLED,
+                                 command=lambda: self.joueur_lance_dés(master, joueur))
+        self.joueur = joueur
+        self.last_grid = {}
+        self['highlightthickness'] = 1
+        self['highlightbackground'] = "black"
+
+    def joueur_lance_dés(self, master, joueur: Joueur):
+        """
+        fonction qui met lance les dés des joueurs et met à jour l'affichage des dés. (événementiel relié au bouton).
+        :param master: Classe parent.
+        :param joueur: Définie la référence du joueur.
+        :return: None
+        """
+        self.mettre_a_jour_dés(joueur)
+        master.rouler_dé_complet()
+
+    def mettre_a_jour_affichage_dés(self, joueur: Joueur):
+        """
+        Fonction qui met à jour l'affichage des dés.
+        :param joueur: Définie la référence du joueur.
+        :return: None
+        """
+        self.label_dés['text'] = joueur.dés
+
+    def mettre_a_jour_dés(self, joueur: Joueur):
+        """
+        fonction qui met à jour les dés des joueurs. (événementiel relié au bouton).
+        :param joueur: définie le référence du joueur.
+        :return: None
+        """
+        joueur.rouler_dés()
+        self.label_dés['text'] = joueur.dés
+        self.désactiver_dés()
+
+    def activer_dés(self):
+        """
+        fonction qui active les dés du joueur courant.
+        :return: None
+        """
+        self.button_dés['state'] = ACTIVE
+
+    def désactiver_dés(self):
+        """
+        fonction qui déactive les dés du joueur lorsque son tour est passé.
+        :return: None
+        """
+        self.button_dés['state'] = DISABLED
+
+
+class FrameJoueurGaucheHaut(FrameJoueur):
+    def __init__(self, master, joueur):
+        """
+        Classe qui crée le frame pour un joueur en particulier.
+        :param master: en référence à la fenêtre mère de tkinter.
+        :param joueur: Définie la référence du joueur.
+        """
+        super().__init__(master, joueur)
+        self.label_joueur.grid(row=0, column=1)
+        self.label_dés.grid(row=2, column=1)
+        self.button_dés.grid(row=1, column=1)
+
+
+class FrameJoueurDroitHaut(FrameJoueur):
+    def __init__(self, master, joueur):
+        """
+        Classe qui crée le frame pour un joueur en particulier.
+        :param master: en référence à la fenêtre mère de tkinter.
+        :param joueur: Définie la référence du joueur.
+        """
+        super().__init__(master, joueur)
+        self.label_joueur.grid(row=0, column=1)
+        self.label_dés.grid(row=2, column=1)
+        self.button_dés.grid(row=1, column=1)
+
+
+class FrameJoueurGaucheBas(FrameJoueur):
+    def __init__(self, master, joueur):
+        """
+        Classe qui crée le frame pour un joueur en particulier.
+        :param master: en référence à la fenêtre mère de tkinter.
+        :param joueur: Définie la référence du joueur.
+        """
+        super().__init__(master, joueur)
+        self.label_joueur.grid(row=3, column=1)
+        self.label_dés.grid(row=1, column=1)
+        self.button_dés.grid(row=2, column=1)
+
+
+class FrameJoueurDroitBas(FrameJoueur):
+    def __init__(self, master, joueur):
+        """
+        Classe qui crée le frame pour un joueur en particulier.
+        :param master: en référence à la fenêtre mère de tkinter.
+        :param joueur: Définie la référence du joueur.
+        """
+        super().__init__(master, joueur)
+        self.label_joueur.grid(row=3, column=1)
+        self.label_dés.grid(row=1, column=1)
+        self.button_dés.grid(row=2, column=1)
 
 
 if __name__ == '__main__':
