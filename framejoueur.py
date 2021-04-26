@@ -5,7 +5,8 @@ from pymafia.joueur import Joueur
 class FrameJoueur(Frame):
     def __init__(self, master, joueur):
         super().__init__(master)
-        self.label_joueur = Label(self, text=f"joueur{joueur.identifiant}")
+        padding = " " * 80
+        self.label_joueur = Label(self, text=f"Joueur {joueur.identifiant}\n{padding}")
         self.label_dés = Label(self, text=joueur.dés, font=("courrier", 32))
         self.button_dés = Button(self, text="rouler les dés", state=DISABLED,
                                  command=lambda: self.joueur_lance_dés(master, joueur)
