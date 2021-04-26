@@ -5,7 +5,7 @@ from pymafia.partie import Partie
 from random import randint
 
 # Variable globale pour le ronde maximum qu'on peut jouer
-RONDEMAX = 2
+RONDEMAX = 10
 
 
 class FenetrePymafia(Tk):
