@@ -5,7 +5,7 @@ from pymafia.partie import Partie
 from random import randint
 
 # Variable globale pour le ronde maximum qu'on peut jouer
-RONDEMAX = 10
+RONDEMAX = 1
 
 
 class FenetrePymafia(Tk):
@@ -37,9 +37,17 @@ class FenetrePymafia(Tk):
         self.premier_menu = Menu(self.menu, tearoff=0)
         self.premier_menu.add_command(label='Relancer une partie', command=self.nouvelle_partie)
         self.premier_menu.add_separator()
-        self.premier_menu.add_command(label='Quitter', command=self.destroy)
+        self.premier_menu.add_command(label='Quitter', command=self.validation_de_sortie)
         self.menu.add_cascade(label='Fichier', menu=self.premier_menu)
         self.config(menu=self.menu)
+
+    def validation_de_sortie(self):
+        message = "Vous avez une partie en cours. Désirez-vous réellement quitter la partie?"
+        if messagebox.askokcancel("Annuler", message, default="cancel", icon="warning"):
+            self.partie_en_cours = True
+            self.destroy()
+        else:
+            pass
 
     def créer_partie(self, nombre_de_joueurs):
         """
@@ -214,7 +222,7 @@ class FenetrePymafia(Tk):
             message = str(self.créer_message_fin_de_partie())
             self.créer_état(message)
             message = self.partie.message_points_en_fin_de_partie()
-            message = message + "\nPour démarrer une nouvelle partie, utiliser le menu."
+            message = message + "\nPour démarrer une nouvelle partie ou pour quitter le jeu, utiliser le menu."
             messagebox.showinfo("Fin de la partie", message)
 
     def rouler_dé_complet(self):
